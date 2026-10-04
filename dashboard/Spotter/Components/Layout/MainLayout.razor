@@ -1,0 +1,35 @@
+@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+
+<RadzenLayout>
+    <RadzenSidebar Responsive="false">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Center" Class="rz-p-3">
+            <RadzenImage Path="@Assets["images/spotter-logo.svg"]" AlternateText="Spotter"
+                         Style="height: 36px; width: auto; cursor: pointer;"
+                         Click="@(() => NavigationManager.NavigateTo(AppRoutes.Overview))"/>
+        </RadzenStack>
+        <RadzenPanelMenu
+            DisplayStyle="MenuItemDisplayStyle.IconAndText"
+            ShowArrow="false">
+            <RadzenPanelMenuItem Text="@Resources.App.Overview" Icon="dashboard" Path="@AppRoutes.Overview"
+                                 Match="NavLinkMatch.All"/>
+            <RadzenPanelMenuItem Text="@Resources.App.Servers" Icon="dns" Path="@AppRoutes.Servers"/>
+            <RadzenPanelMenuItem Text="@Resources.App.AuditLog" Icon="receipt_long" Path="@AppRoutes.AuditLog"/>
+            <RadzenPanelMenuItem Text="@Resources.App.Alerts" Icon="notifications" Path="@AppRoutes.Alerts"/>
+            <RadzenPanelMenuItem Text="@Resources.App.PostureScan" Icon="radar" Path="@AppRoutes.PostureScan"/>
+            <RadzenPanelMenuItem Text="@Resources.App.Nis2" Icon="verified_user" Path="@AppRoutes.Nis2"/>
+            <RadzenPanelMenuItem Text="@Resources.App.Settings" Icon="settings" Path="@AppRoutes.Settings"/>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+</RadzenLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>

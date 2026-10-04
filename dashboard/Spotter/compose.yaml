@@ -1,0 +1,7 @@
+﻿services:
+  spotter:
+    image: spotter
+    build:
+      context: .
+      dockerfile: Dockerfile
+

@@ -1,0 +1,86 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Overview" xml:space="preserve">
+        <value>Áttekintés</value>
+    </data>
+    <data name="Servers" xml:space="preserve">
+        <value>Szerverek</value>
+    </data>
+    <data name="AuditLog" xml:space="preserve">
+        <value>Audit napló</value>
+    </data>
+    <data name="Alerts" xml:space="preserve">
+        <value>Riasztások</value>
+    </data>
+    <data name="PostureScan" xml:space="preserve">
+        <value>Posture scan</value>
+    </data>
+    <data name="Nis2" xml:space="preserve">
+        <value>NIS2</value>
+    </data>
+    <data name="Settings" xml:space="preserve">
+        <value>Beállítások</value>
+    </data>
+    <data name="UnderConstruction" xml:space="preserve">
+        <value>Ez az oldal fejlesztés alatt áll.</value>
+    </data>
+    <data name="ServerCountBadge" xml:space="preserve">
+        <value>5 szerver</value>
+    </data>
+    <data name="Last24HoursBadge" xml:space="preserve">
+        <value>Utolsó 24 óra</value>
+    </data>
+    <data name="OpenAlerts" xml:space="preserve">
+        <value>Nyitott riasztások</value>
+    </data>
+    <data name="CriticalEventsPerDay" xml:space="preserve">
+        <value>Kritikus események / nap</value>
+    </data>
+    <data name="PostureAverage" xml:space="preserve">
+        <value>Posture-átlag</value>
+    </data>
+    <data name="Nis2Coverage" xml:space="preserve">
+        <value>NIS2 fedettség</value>
+    </data>
+    <data name="SecurityEventsChartTitle" xml:space="preserve">
+        <value>Biztonsági események (7 nap)</value>
+    </data>
+    <data name="TotalEventsSeries" xml:space="preserve">
+        <value>Összes esemény</value>
+    </data>
+    <data name="CriticalHighSeries" xml:space="preserve">
+        <value>Kritikus / magas</value>
+    </data>
+    <data name="RecentAuditEvents" xml:space="preserve">
+        <value>Legutóbbi audit-események</value>
+    </data>
+    <data name="Nis2CoverageCaption" xml:space="preserve">
+        <value>15 kontrollcsalád 70% felett</value>
+    </data>
+    <data name="PostureStatusTableTitle" xml:space="preserve">
+        <value>Minden erőforrás posture-állapota</value>
+    </data>
+    <data name="ServerColumn" xml:space="preserve">
+        <value>Szerver</value>
+    </data>
+    <data name="ScoreColumn" xml:space="preserve">
+        <value>Score</value>
+    </data>
+    <data name="FindingsColumn" xml:space="preserve">
+        <value>Nyitott találat</value>
+    </data>
+    <data name="FindingsSuffix" xml:space="preserve">
+        <value>nyitott</value>
+    </data>
+</root>

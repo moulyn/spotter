@@ -1,0 +1,161 @@
+@attribute [Route(AppRoutes.Overview)]
+
+@inject NavigationManager NavigationManager
+
+<PageTitle>Spotter - @Resources.App.Overview</PageTitle>
+
+<RadzenStack Gap="1.5rem">
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween">
+        <RadzenText TextStyle="TextStyle.H4" Text="@Resources.App.Overview"/>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
+            <RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@Resources.App.ServerCountBadge"/>
+            <RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@Resources.App.Last24HoursBadge"/>
+        </RadzenStack>
+    </RadzenStack>
+
+    <RadzenRow Gap="1rem">
+        @foreach (var stat in Stats)
+        {
+            <RadzenColumn Size="3">
+                <RadzenCard Variant="Variant.Outlined" Class="stat-card"
+                            @onclick="@(() => NavigationManager.NavigateTo(stat.Route))">
+                    <RadzenText TextStyle="TextStyle.Caption"
+                                class="rz-color-text-secondary rz-my-0">@stat.Label</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H4" class="rz-my-0"
+                                Style="@stat.ColorStyle">@stat.Value</RadzenText>
+                </RadzenCard>
+            </RadzenColumn>
+        }
+    </RadzenRow>
+
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenText TextStyle="TextStyle.Subtitle1">@Resources.App.SecurityEventsChartTitle</RadzenText>
+        <RadzenChart>
+            <RadzenLineSeries Data="@SecurityEvents" CategoryProperty="Day" Title="@Resources.App.TotalEventsSeries"
+                              ValueProperty="Total">
+                <RadzenMarkers MarkerType="MarkerType.Circle"/>
+            </RadzenLineSeries>
+            <RadzenLineSeries Data="@SecurityEvents" CategoryProperty="Day" Title="@Resources.App.CriticalHighSeries"
+                              ValueProperty="Critical">
+                <RadzenMarkers MarkerType="MarkerType.Circle"/>
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="10"/>
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true"/>
+            </RadzenValueAxis>
+            <RadzenLegend Position="LegendPosition.Bottom"/>
+            <RadzenChartTooltipOptions Shared="true" Trigger="ChartTooltipTrigger.Axis"/>
+        </RadzenChart>
+    </RadzenCard>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="6">
+            <RadzenCard Variant="Variant.Outlined">
+                <RadzenText TextStyle="TextStyle.Subtitle1">@Resources.App.RecentAuditEvents</RadzenText>
+                <RadzenStack Gap="0.75rem">
+                    @foreach (var auditEvent in AuditEvents)
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                            <RadzenBadge BadgeStyle="@auditEvent.Severity" IsPill="true"/>
+                            <RadzenText Text="@auditEvent.Description"/>
+                        </RadzenStack>
+                    }
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            <RadzenCard Variant="Variant.Outlined">
+                <RadzenText TextStyle="TextStyle.Subtitle1">@Resources.App.Nis2Coverage</RadzenText>
+                <RadzenProgressBar Value="81" ProgressBarStyle="ProgressBarStyle.Success"/>
+                <RadzenText TextStyle="TextStyle.Caption"
+                            class="rz-color-text-secondary">@Resources.App.Nis2CoverageCaption
+                </RadzenText>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenText TextStyle="TextStyle.Subtitle1">@Resources.App.PostureStatusTableTitle</RadzenText>
+        <RadzenDataGrid Data="@PostureRows" TItem="PostureRow" AllowSorting="true">
+            <Columns>
+                <RadzenDataGridColumn TItem="PostureRow" Property="Name" Title="@Resources.App.ServerColumn"/>
+                <RadzenDataGridColumn TItem="PostureRow" Property="Score" Title="@Resources.App.ScoreColumn">
+                    <Template Context="row">
+                        <RadzenBadge BadgeStyle="@ScoreBadgeStyle(row.Score)" Text="@row.Score.ToString()" IsPill="true"/>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PostureRow" Property="Findings" Title="@Resources.App.FindingsColumn">
+                    <Template Context="row">
+                        <RadzenBadge BadgeStyle="@FindingsBadgeStyle(row.Findings)"
+                                     Text="@($"{row.Findings} {Resources.App.FindingsSuffix}")" IsPill="true"/>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenCard>
+
+</RadzenStack>
+
+@code {
+
+    record StatCard(string Label, string Value, string ColorStyle, string Route);
+
+    record SecurityEventPoint(string Day, int Total, int Critical);
+
+    record AuditEvent(string Description, BadgeStyle Severity);
+
+    record PostureRow(string Name, int Score, int Findings);
+
+    private List<StatCard> Stats { get; } = new()
+    {
+        new(Resources.App.OpenAlerts, "1", "color: var(--rz-danger);", AppRoutes.Alerts),
+        new(Resources.App.CriticalEventsPerDay, "2", "", AppRoutes.AuditLog),
+        new(Resources.App.PostureAverage, "79 / 100", "color: var(--rz-warning);", AppRoutes.PostureScan),
+        new(Resources.App.Nis2Coverage, "81%", "", AppRoutes.Nis2),
+    };
+
+    private List<SecurityEventPoint> SecurityEvents { get; } = new()
+    {
+        new("H", 14, 2),
+        new("K", 16, 1),
+        new("Sze", 15, 2),
+        new("Cs", 18, 1),
+        new("P", 17, 1),
+        new("Szo", 20, 1),
+        new("V", 19, 1),
+    };
+
+    private List<AuditEvent> AuditEvents { get; } = new()
+    {
+        new("Sudo jogosultság módosítva — matrica-api-01", BadgeStyle.Warning),
+        new("Új SSH kulcs hozzáadva — hotelconnect-vps", BadgeStyle.Info),
+        new("Sikertelen bejelentkezés 5x — nas-backup-srv", BadgeStyle.Danger),
+        new("systemd egység újraindítva: nginx — webshop-prod-02", BadgeStyle.Secondary),
+    };
+
+    private List<PostureRow> PostureRows { get; } = new()
+    {
+        new("matrica-api-01", 82, 1),
+        new("hotelconnect-vps", 91, 0),
+        new("nas-backup-srv", 58, 3),
+        new("webshop-prod-02", 74, 2),
+        new("crm-db-01", 88, 1),
+    };
+
+    private static BadgeStyle ScoreBadgeStyle(int score) => score switch
+    {
+        >= 80 => BadgeStyle.Success,
+        >= 65 => BadgeStyle.Warning,
+        _ => BadgeStyle.Danger,
+    };
+
+    private static BadgeStyle FindingsBadgeStyle(int findings) => findings switch
+    {
+        0 => BadgeStyle.Success,
+        <= 2 => BadgeStyle.Warning,
+        _ => BadgeStyle.Danger,
+    };
+
+}
