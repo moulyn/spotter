@@ -122,6 +122,6 @@ Harassment, personal attacks or discriminatory behavior are not tolerated and ma
 
 ## License of contributions
 
-Spotter's license has not been decided yet. We will add a `LICENSE` file - and, if needed, a contributor agreement - before accepting any code contributions, so it's always clear under which terms your work is used. By submitting a documentation fix before then, you agree that it may be distributed under the project's final open-source license.
+Spotter is licensed under the [MIT License](LICENSE). By submitting a contribution, you agree that it will be licensed under the same terms.
 
 Thank you for helping make Spotter better!
