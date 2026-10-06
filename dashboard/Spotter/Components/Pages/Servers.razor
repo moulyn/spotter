@@ -1,3 +1,5 @@
+@using Spotter.Models
+
 @attribute [Route(AppRoutes.Servers)]
 
 <PageTitle>Spotter - @Resources.App.Servers</PageTitle>
@@ -5,107 +7,18 @@
 <RadzenStack Gap="1.5rem">
     <RadzenText TextStyle="TextStyle.H4" Text="@Resources.App.Servers"/>
 
-    <RadzenDataGrid Data="@servers" TItem="Server" AllowFiltering="false"
-                    AllowPaging="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
-                    Class="server-datagrid"
-                    RowSelect="@(args => selectedServer = args)"
-                    style="--rz-primary: #e8e8e8; --rz-grid-selected-color: #e8e8e8;">
-        <Columns>
-            <RadzenDataGridColumn TItem="Server" Property="Name" Title="NÉV"/>
-            <RadzenDataGridColumn TItem="Server" Property="Status" Title="STÁTUSZ">
-                <Template Context="server">
-                    <RadzenBadge BadgeStyle="@StatusBadgeStyle(server.Status)" Text="@server.Status" IsPill="true"/>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Server" Property="OS" Title="OS"/>
-            <RadzenDataGridColumn TItem="Server" Property="Agent" Title="AGENT"/>
-            <RadzenDataGridColumn TItem="Server" Property="LastReport" Title="UTOLSÓ JELENTKEZÉS"/>
-            <RadzenDataGridColumn TItem="Server" Property="Uptime" Title="UPTIME"/>
-        </Columns>
-    </RadzenDataGrid>
+    <ServerDataComponent servers="@servers" @bind-SelectedServer="@selectedServer"/>
 
     @{
         var displayServer = selectedServer ?? servers.FirstOrDefault();
     }
 
-    @* első blokk*  @
-    <RadzenCard Variant="Variant.Outlined">
-        <RadzenText TextStyle="TextStyle.H5" Text="@displayServer.Name" class="rz-mb-4"/>
-
-        <RadzenRow Gap="1rem">
-            <RadzenColumn Size="3">
-                <RadzenCard Variant="Variant.Filled" Class="text-center">
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Posture score</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H3" Style="@ScoreColorStyle(displayServer.PostureScore)"
-                                class="rz-mt-2">@displayServer.PostureScore</RadzenText>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <RadzenColumn Size="3">
-                <RadzenCard Variant="Variant.Filled" Class="text-center">
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Nyitott riasztás</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H3" class="rz-mt-2">@displayServer.OpenAlerts</RadzenText>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <RadzenColumn Size="3">
-                <RadzenCard Variant="Variant.Filled" Class="text-center">
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Utolsó posture scan</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-mt-2">@displayServer.LastPostureScan</RadzenText>
-                </RadzenCard>
-            </RadzenColumn>
-
-            <RadzenColumn Size="3">
-                <RadzenCard Variant="Variant.Filled" Class="text-center">
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Riasztási csatornák</RadzenText>
-                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem" JustifyContent="JustifyContent.Center" class="rz-mt-2">
-                        @foreach (var channel in displayServer.AlertChannels)
-                        {
-                            <RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@channel" IsPill="true"/>
-                        }
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
-
-        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" class="rz-mt-4">
-            @foreach (var tag in displayServer.Tags)
-            {
-                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text="@tag" IsPill="true"/>
-            }
-        </RadzenStack>
-    </RadzenCard>
+    <ServerDetailsComponent Server="@displayServer"/>
     
-    @* második blokk *@
-    <RadzenCard Variant="Variant.Outlined">
-        <RadzenStack Gap="1rem">
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
-                         AlignItems="AlignItems.Center">
-                <RadzenText TextStyle="TextStyle.H6" Text="@($"Riasztási csatornák — {displayServer.Name}")"/>
-                @if (displayServer.GlobalInherit)
-                {
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">globális öröklés</RadzenText>
-                }
-            </RadzenStack>
-
-            @ChannelField("Discord webhook", displayServer.DiscordWebhook, true)
-            @ChannelField("Slack webhook", displayServer.SlackWebhook, true)
-            @ChannelField("Email", displayServer.Email, false)
-
-            <div>
-                <RadzenButton Text="Csatornák szerkesztése ehhez a szerverhez"
-                              Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Light"
-                              Click="@EditChannels"/>
-            </div>
-        </RadzenStack>
-    </RadzenCard>
+    <ServerAlertComponent Server="@displayServer" EditChannels="@EditChannels"/>
 </RadzenStack>
 
 @code {
-    record Server(string Name, string Status, string OS, string Agent, string LastReport, string Uptime,
-        int PostureScore, int OpenAlerts, string LastPostureScan, string[] AlertChannels, string[] Tags,
-        string DiscordWebhook, string SlackWebhook, string Email, bool GlobalInherit);
-
     private List<Server> servers { get; set; } = new()
     {
         new("webshop-prod-02", "Online", "Ubuntu 22.04", "v2.1.3", "2 perce", "15 nap 4 óra", 74, 2, "5 perce",
@@ -140,28 +53,4 @@
     {
         // TODO: szerkesztő dialógus / navigáció a kiválasztott szerverhez
     }
-
-    private RenderFragment ChannelField(string label, string value, bool mono) => @<div>
-        <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary rz-mb-1">@label</RadzenText>
-        <RadzenCard Variant="Variant.Filled" Style="padding: 0.75rem 1rem;">
-            <RadzenText TextStyle="TextStyle.Body2"
-                        Style="@(mono ? "font-family: monospace; margin: 0;" : "margin: 0;")">
-                @(string.IsNullOrWhiteSpace(value) ? "–" : value)
-            </RadzenText>
-        </RadzenCard>
-    </div>;
-
-    private static BadgeStyle StatusBadgeStyle(string status) => status switch
-    {
-        "Online" => BadgeStyle.Success,
-        "Offline" => BadgeStyle.Danger,
-        _ => BadgeStyle.Warning,
-    };
-
-    private static string ScoreColorStyle(int score) => score switch
-    {
-        >= 80 => "color: var(--rz-success);",
-        >= 65 => "color: var(--rz-warning);",
-        _ => "color: var(--rz-danger);",
-    };
 }

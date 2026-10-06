@@ -1,0 +1,42 @@
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenStack Gap="1rem">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween"
+                     AlignItems="AlignItems.Center">
+            <RadzenText TextStyle="TextStyle.H6" Text="@($"Riasztási csatornák — {Server.Name}")"/>
+            @if (Server.GlobalInherit)
+            {
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">globális öröklés</RadzenText>
+            }
+        </RadzenStack>
+
+        @ChannelField("Discord webhook", Server.DiscordWebhook, true)
+        @ChannelField("Slack webhook", Server.SlackWebhook, true)
+        @ChannelField("Email", Server.Email, false)
+
+        <div>
+            <RadzenButton Text="Csatornák szerkesztése ehhez a szerverhez"
+                          Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Light"
+                          Click="@EditChannels"/>
+        </div>
+    </RadzenStack>
+</RadzenCard>
+
+@using Spotter.Models
+
+@code {
+    [Parameter]
+    public Server Server { get; set; }
+
+    [Parameter]
+    public EventCallback EditChannels { get; set; }
+
+    private RenderFragment ChannelField(string label, string value, bool mono) => @<div>
+        <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary rz-mb-1">@label</RadzenText>
+        <RadzenCard Variant="Variant.Filled" Style="padding: 0.75rem 1rem;">
+            <RadzenText TextStyle="TextStyle.Body2"
+                        Style="@(mono ? "font-family: monospace; margin: 0;" : "margin: 0;")">
+                @(string.IsNullOrWhiteSpace(value) ? "–" : value)
+            </RadzenText>
+        </RadzenCard>
+    </div>;
+}

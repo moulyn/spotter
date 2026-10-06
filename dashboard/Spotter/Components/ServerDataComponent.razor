@@ -1,0 +1,44 @@
+<RadzenDataGrid Data="@servers" TItem="Server" AllowFiltering="false"
+                AllowPaging="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single"
+                Class="server-datagrid"
+                RowClick="@((DataGridRowMouseEventArgs<Server> args) => OnRowSelect(args))"
+                style="--rz-primary: #e8e8e8; --rz-grid-selected-color: #e8e8e8;">
+    <Columns>
+        <RadzenDataGridColumn TItem="Server" Property="Name" Title="NÉV"/>
+        <RadzenDataGridColumn TItem="Server" Property="Status" Title="STÁTUSZ">
+            <Template Context="server">
+                <RadzenBadge BadgeStyle="@StatusBadgeStyle(server.Status)" Text="@server.Status" IsPill="true"/>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Server" Property="OS" Title="OS"/>
+        <RadzenDataGridColumn TItem="Server" Property="Agent" Title="AGENT"/>
+        <RadzenDataGridColumn TItem="Server" Property="LastReport" Title="UTOLSÓ JELENTKEZÉS"/>
+        <RadzenDataGridColumn TItem="Server" Property="Uptime" Title="UPTIME"/>
+    </Columns>
+</RadzenDataGrid>
+
+@using Spotter.Models
+
+@code {
+    [Parameter]
+    public List<Server> servers { get; set; }
+
+    [Parameter]
+    public Server SelectedServer { get; set; }
+
+    [Parameter]
+    public EventCallback<Server> SelectedServerChanged { get; set; }
+
+    private void OnRowSelect(DataGridRowMouseEventArgs<Server> args)
+    {
+        SelectedServer = args.Data;
+        SelectedServerChanged.InvokeAsync(args.Data);
+    }
+
+    private static BadgeStyle StatusBadgeStyle(string status) => status switch
+    {
+        "Online" => BadgeStyle.Success,
+        "Offline" => BadgeStyle.Danger,
+        _ => BadgeStyle.Warning,
+    };
+}

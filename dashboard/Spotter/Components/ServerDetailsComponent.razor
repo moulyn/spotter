@@ -1,0 +1,60 @@
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenText TextStyle="TextStyle.H5" Text="@Server.Name" class="rz-mb-4"/>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="3">
+            <RadzenCard Variant="Variant.Filled" Class="text-center">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Posture score</RadzenText>
+                <RadzenText TextStyle="TextStyle.H3" Style="@ScoreColorStyle(Server.PostureScore)"
+                            class="rz-mt-2">@Server.PostureScore</RadzenText>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="3">
+            <RadzenCard Variant="Variant.Filled" Class="text-center">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Nyitott riasztás</RadzenText>
+                <RadzenText TextStyle="TextStyle.H3" class="rz-mt-2">@Server.OpenAlerts</RadzenText>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="3">
+            <RadzenCard Variant="Variant.Filled" Class="text-center">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Utolsó posture scan</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1" class="rz-mt-2">@Server.LastPostureScan</RadzenText>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="3">
+            <RadzenCard Variant="Variant.Filled" Class="text-center">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-text-secondary">Riasztási csatornák</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem" JustifyContent="JustifyContent.Center" class="rz-mt-2">
+                    @foreach (var channel in Server.AlertChannels)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@channel" IsPill="true"/>
+                    }
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" class="rz-mt-4">
+        @foreach (var tag in Server.Tags)
+        {
+            <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text="@tag" IsPill="true"/>
+        }
+    </RadzenStack>
+</RadzenCard>
+
+@using Spotter.Models
+
+@code {
+    [Parameter]
+    public Server Server { get; set; }
+
+    private static string ScoreColorStyle(int score) => score switch
+    {
+        >= 80 => "color: var(--rz-success);",
+        >= 65 => "color: var(--rz-warning);",
+        _ => "color: var(--rz-danger);",
+    };
+}
